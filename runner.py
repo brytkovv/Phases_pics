@@ -9,18 +9,14 @@ class Transform_files:
         self._period_from = period_from
         self._period_till = period_till
 
+
     def _transform(self, file, type):
         data = pd.read_csv(file, skiprows=range(0, 5), names=['Date and time', f'{type}_Value', \
             f'{type}_Min', f'{type}_Max'], delimiter=';', encoding='utf-8', decimal=",")
         data['Date and time'] = pd.to_datetime(data['Date and time'], errors='coerce', format='%d.%m.%Y %H:%M:%S')
         data = data.loc[(data['Date and time'] >= self._period_from) & (data['Date and time'] < self._period_till)]
-
-        lst = [1, 2]
-        if data.shape[0] % 2 != 0:
-            data = data[:-1]
-        [lst.append(i) for _ in range(data.shape[0] // 2 - 1) for i in [1, 2]]
-        data['count'] = lst
         return data
+
 
     def __call__(self, home, *args, **kwargs):
         file_list = os.listdir(home)
